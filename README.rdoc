@@ -148,7 +148,37 @@ That's it! You can name these methods anything you want. That's what's great abo
 
 === 7. Restrict Access
 
-This is application specific. You can do this however you wish. For an example {see the ApplicationController}[http://github.com/binarylogic/authlogic_example/blob/5819a13477797d758cb6871f475ed1c54bf8a3a7/app/controllers/application_controller.rb] in the authlogic example app. Notice the require_user and require_no_user methods. They are enforced via before_filters in the other controllers. Restricting access is as simple as that. There are a million ways to do this, but this seems to be the most common and the simplest.
+This is application specific. You can do this however you wish. For an example {see the ApplicationController}[http://github.com/binarylogic/authlogic_example/blob/5819a13477797d758cb6871f475ed1c54bf8a3a7/app/controllers/application_controller.rb] in the authlogic example app:
+
+  # app/controllers/application.rb
+  def require_user
+    unless current_user
+      store_location
+      flash[:notice] = "You must be logged in to access this page"
+      redirect_to new_user_session_url
+      return false
+    end
+  end
+  
+  def require_no_user
+    if current_user
+      store_location
+      flash[:notice] = "You must be logged out to access this page"
+      redirect_to account_url
+      return false
+    end
+  end
+  
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+  
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
+  end
+
+Notice the require_user and require_no_user methods. They are enforced via before_filters in the other controllers. Restricting access is as simple as that. There are a million ways to do this, but this seems to be the most common and the simplest.
 
 === 8. Register users
 
