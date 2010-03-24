@@ -1,3 +1,6 @@
+require 'authlogic' # Ensure authlogic is always loaded before ApplicationController, or
+                    # AuthlogicLoadedTooLateError occurs.
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
